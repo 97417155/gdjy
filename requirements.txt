@@ -1,0 +1,14 @@
+# 后端可选依赖
+#
+# 核心功能（指标取数、NL2SQL、报告生成、权限隔离、兜底校验）只用 Python 标准库，
+# 不装任何包也能 `python run.py` 跑起来。下面这几项是"增强项"，按需安装：
+#
+#   pip install -r requirements.txt
+#
+# 装不上（如内网无 PyPI）也不影响运行：FastAPI 缺失时自动回退标准库服务器，
+# python-docx / reportlab 缺失时 Word/PDF 导出按钮自动置灰，HTML 导出仍可用。
+
+fastapi>=0.110,<1.0     # 接口文档 /docs、异步 SSE
+uvicorn>=0.27           # FastAPI 运行容器
+python-docx>=1.1        # 报告导出 .docx
+reportlab>=4.0          # 报告导出 .pdf（需系统里有中文字体）

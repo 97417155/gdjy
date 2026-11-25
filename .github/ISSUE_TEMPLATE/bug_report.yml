@@ -1,0 +1,58 @@
+name: 🐞 缺陷报告
+description: 报告可复现的问题，帮助我们定位
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈。请尽量给出可复现步骤；涉及数据的问题请**不要粘贴任何真实业务数据**——
+        本项目使用合成数据，可用 `python run.py --reset` 重建。
+  - type: textarea
+    id: what
+    attributes:
+      label: 现象
+      description: 实际发生了什么？期望是什么？
+      placeholder: 例如：点击「生成本期报告」后，第 5 步一直停在"进行中"。
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. python run.py
+        2. 以 U002 身份进入「经营报告」
+        3. 选择 2026年10月，点击「生成本期报告」
+        4. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: 影响模块
+      options:
+        - 智能问答（NL2SQL）
+        - 经营报告 / 导出
+        - 权限与隔离
+        - 前端界面 / 交互
+        - 数据与指标口径
+        - 其他
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: 环境
+      description: 操作系统、Python / Node 版本、是否安装 requirements.txt
+      placeholder: Windows 11 · Python 3.11.6 · Node 20.11 · 已安装可选依赖
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志或截图
+      description: 控制台输出、后端报错栈、界面截图（可直接拖拽上传）
+      render: shell
+    validations:
+      required: false

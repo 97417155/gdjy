@@ -1,0 +1,54 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.venv*/
+_pydeps/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---- 演示数据库（首次运行 `python run.py` 自动生成）----
+data/db/*.db
+data/db/*.db-journal
+data/db/*.db-wal
+data/db/*.db-shm
+
+# ---- 前端 ----
+frontend/node_modules/
+frontend/.vite/
+frontend/*.timestamp-*.mjs
+frontend/dist/
+
+# ---- 本地运行时产物 ----
+*.log
+dev.log
+ask.json
+rb.json
+d.json
+t.json
+a.json
+dom.html
+dom2.html
+.edgeprof/
+shots/
+
+# ---- 编辑器 / 系统 ----
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- 环境变量与密钥 ----
+.env
+.env.*
+!.env.example
+
+# 说明：web/ 是 `npm run build` 的产物，但为了让 `git clone` 后
+# 能直接 `python run.py` 看到界面，这里选择把它提交进仓库。
+# 若要改为构建产物不入库，取消下面一行注释，并在 README 中说明需先构建。
+# web/

@@ -1,0 +1,25 @@
+# 默认按文本处理并统一换行，避免 Windows / macOS 混提交
+* text=auto eol=lf
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# 二进制文件不做换行转换与 diff
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.docx binary
+*.db binary
+*.woff binary
+*.woff2 binary
+
+# 构建产物折叠显示
+web/assets/* linguist-generated=true
+frontend/package-lock.json linguist-generated=true
+
+# 报告导出模板类文件不需要语言统计
+docs/images/* linguist-documentation

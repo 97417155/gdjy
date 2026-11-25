@@ -1,0 +1,38 @@
+name: 💡 需求建议
+description: 提出新功能或改进想法
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 想解决什么问题
+      description: 先描述场景与痛点，再谈方案，避免"直接给我一个 XX"
+      placeholder: 例如：分公司负责人希望能把报告直接发给部门，不需要手工另存。
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 期望的做法
+      placeholder: 例如：报告页增加"发送到部门"按钮，走审批链路的推送接口，带回执号。
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 考虑过的替代方案
+    validations:
+      required: false
+  - type: dropdown
+    id: scope
+    attributes:
+      label: 影响范围
+      options:
+        - 后端业务逻辑
+        - 前端界面
+        - 数据模型 / 指标口径
+        - 文档
+        - 不确定
+    validations:
+      required: true
