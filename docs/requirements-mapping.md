@@ -29,7 +29,7 @@ python run.py           # 一条命令启动，浏览器打开 http://127.0.0.1:
 | 20+ 表跨表关联查询 | `app/seed.py` | 29 张表（9 维表 + 18 事实表 + 2 关联表），指标 SQL 最多跨 6 表 |
 | SQL 语法捕获、改写、重试、失败降级 | `app/nl2sql/repair.py` | 3 次重试 + 四类定向修正；仍失败则降级到指标宽表 |
 | 行级 / 岗位权限隔离 | `app/permission.py` | 行级靠 SQL 谓词注入（括号深度感知），列级靠利润指标脱敏 |
-| 多轮反问、指标下钻、BI 图表联动 | `router.py` + `web/app.js` | 会话上下文继承指标与期间；回答自带图表规格，前端 SVG 渲染 |
+| 多轮反问、指标下钻、BI 图表联动 | `router.py` + `frontend/src/views/ChatView.vue` | 会话上下文继承指标与期间；回答自带图表规格，前端 ECharts 渲染 |
 
 ---
 
@@ -73,10 +73,10 @@ npm run dev          # http://localhost:5173 ，/api 已代理到 8848
 ### 2.3 质量检查
 
 ```bash
-cd gdjy && python tests/test_smoke.py      # 后端端到端 30 项
+cd gdjy && python tests/test_smoke.py      # 后端端到端 36 项
 cd gdjy/frontend
 npm run type-check                         # vue-tsc 全量类型检查
-npm test                                   # Vitest 单元测试（32 项）
+npm test                                   # Vitest 单元测试（51 项）
 ```
 
 常用参数：
@@ -85,7 +85,7 @@ npm test                                   # Vitest 单元测试（32 项）
 python run.py --reset        # 重建演示数据
 python run.py --port 9000    # 换端口
 python run.py --init-only    # 只初始化，不起服务
-python tests/test_smoke.py   # 端到端自检（29 项）
+python tests/test_smoke.py   # 端到端自检（36 项）
 ```
 
 深链（方便演示与分享）：
@@ -248,52 +248,18 @@ http://127.0.0.1:8848/#data                  进数据与权限页
 
 ## 九、目录结构
 
-```
-gdjy/
-├── run.py                     # 一键启动（初始化 + 建宽表 + 起服务，自动选 FastAPI/标准库）
-├── _pydeps/                   # 可选依赖（FastAPI + uvicorn，pip --target 安装）
-├── server/fastapi_app.py      # FastAPI 适配层（路由 + SSE + 静态托管）
-├── app/report/export.py       # 报告导出：Word / PDF / 可打印 HTML（共用一套 Markdown 解析）
-├── app/report/sections.py     # 七章正文构建：结论句 + 明细表 + 分析 + 措施
-├── app/service.py             # 业务服务层（HTTP 框架无关）
-├── frontend/                  # Vue 3 前端工程
-│   ├── vite.config.js         # 构建到 ../web，dev 代理 /api
-│   └── src/
-│       ├── main.js / App.vue
-│       ├── router/index.js    # 5 个页面路由（history 模式）
-│       ├── stores/session.js  # 身份、期间、数据范围等全局状态
-│       ├── api/index.js       # 统一接口层（替换 baseURL / 加鉴权头只改这里）
-│       ├── utils/             # charts（ECharts 配置）· markdown · format
-│       ├── components/        # AppSidebar · EChart · ChatMessage · ReportStepper · Toast
-│       └── views/             # Dashboard · Chat · Report · Data · Audit
-├── web/                       # 前端构建产物（由后端托管）
-├── app/
-│   ├── config.py              # 期间、岗位、模型、状态机配置
-│   ├── seed.py                # 29 表造数（确定性随机）
-│   ├── db.py                  # 连接、元数据、Oracle 方言执行包装
-│   ├── oracle_compat.py       # 11g 方言 lint / rewrite / to_sqlite
-│   ├── metrics.py             # 28 指标元数据 + SQL 组装 + 宽表
-│   ├── permission.py          # 行级谓词注入 + 列级脱敏
-│   ├── dashboard.py           # 驾驶舱数据
-│   ├── kb.py                  # BM25 知识库检索
-│   ├── api.py                 # HTTP 路由（标准库）
-│   ├── nl2sql/
-│   │   ├── lexicon.py         # 同义词、时间解析、维度识别
-│   │   ├── prompts.py         # 行业提示范式 + Few-shot + 报告范式
-│   │   ├── planner.py         # 查询计划（指标/趋势/档案/滞后/风险）
-│   │   ├── repair.py          # 修复回路 + 降级
-│   │   ├── llm.py             # OpenAI 兼容接入（可缺省）
-│   │   └── router.py          # 意图路由 + 回答格式化 + 会话
-│   └── report/
-│       ├── builder.py         # 报告编排（含内置文案引擎）
-│       ├── validator.py       # 10 条兜底校验规则
-│       └── workflow.py        # 审批推送状态机
-├── data/kb/                   # 7 篇制度与口径文档
-├── data/db/gdjy.db            # SQLite 演示库（首次运行自动生成）
-└── tests/test_smoke.py        # 22 项端到端自检
-```
+完整的目录树与每层职责见 [README 的「目录结构」](../README.md#目录结构)，
+这里不再重复，避免两处维护导致不一致。
 
----
+速查：
+
+| 位置 | 职责 |
+|---|---|
+| `app/service.py` | 业务服务层，与 HTTP 框架无关 |
+| `app/nl2sql/` | 词表、提示词、计划器、修复回路、路由 |
+| `app/report/` | 报告编排、章节、校验、导出、审批流 |
+| `frontend/src/` | Vue 3 + TypeScript 前端（views / components / stores / api / utils） |
+| `tests/test_smoke.py` | 后端端到端自检 |
 
 ## 九之一、前端架构说明
 
@@ -305,7 +271,7 @@ gdjy/
 | 图表 | `utils/charts.ts` 输出 ECharts option（条形 / 折线 / 环形），`EChart.vue` 负责实例与自适应 |
 | 按需打包 | ECharts 仅引入 bar/line/pie + 必要组件，产物 536 KB（gzip 181 KB），较全量减少约 50% |
 | 表结构 | 数据表卡片可点击，`TableDrawer` 抽屉展示列定义 / 样例数据 / 相关指标 / 关联表，支持深链 `/data?table=xxx` |
-| 测试 | Vitest + @vue/test-utils，32 项覆盖格式化、Markdown、图表配置、SSE 解析、聊天渲染、步进器、抽屉 |
+| 测试 | Vitest + @vue/test-utils，51 项覆盖格式化、Markdown、图表配置、SSE 解析、聊天渲染、步进器、抽屉、多会话与分组 |
 | 深链 | `/chat?q=xxx` 自动提问、`/report?report=latest`、`/data?table=FACT_CONTRACT` |
 | 打印 | 报告页 `@media print` 隐藏导航与操作区，直接输出正文 |
 
